@@ -220,7 +220,8 @@ class MergeCells extends BasePlugin {
    */
   getBulkCollectionData(populationArgumentsList) {
     const populationDataRange = this.getBulkCollectionDataRange(populationArgumentsList);
-    const dataAtRange = this.hot.getData(...populationDataRange);
+    //const dataAtRange = this.hot.getData(...populationDataRange);
+	const dataAtRange = this.hot.getSourceData(...populationDataRange);
     const newDataAtRange = dataAtRange.splice(0);
 
     arrayEach(populationArgumentsList, (mergedCellArguments) => {
@@ -376,8 +377,8 @@ class MergeCells extends BasePlugin {
         }
 
         if (i === 0 && j === 0) {
-          clearedValue = this.hot.getDataAtCell(mergeParent.row, mergeParent.col);
-
+          //clearedValue = this.hot.getDataAtCell(mergeParent.row, mergeParent.col);
+			clearedValue = this.hot.getSourceDataAtCell(mergeParent.row, mergeParent.col);
         } else {
           this.hot.setCellMeta(mergeParent.row + i, mergeParent.col + j, 'hidden', true);
         }
