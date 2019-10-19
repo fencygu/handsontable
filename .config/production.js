@@ -33,6 +33,7 @@ module.exports.create = function create(envArgs) {
               pure_getters: true,
               warnings: false,
             },
+			ascii:true,
             mangle: {},
             output: {
               comments: /^!|@preserve|@license|@cc_on/i,

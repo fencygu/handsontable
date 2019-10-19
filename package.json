@@ -68,6 +68,7 @@
   ],
   "dependencies": {
     "@types/pikaday": "1.6.0",
+    "build": "^0.1.4",
     "core-js": "^3.0.0",
     "hot-formula-parser": "^3.0.1",
     "moment": "2.20.1",

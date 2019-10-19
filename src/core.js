@@ -803,7 +803,7 @@ export default function Core(rootElement, userSettings, rootInstanceSymbol = fal
                   var  isNumeric = function isNumeric(variable) {
                       return typeof variable === 'number' || variable instanceof Number||!isNaN(variable);
                   }
-                  // TODO 填充时，修改公式的累加引用。
+                  
                 //console.log(direction); down right
                   let setInfo=instance.getSettings();
                   let bFormulas=instance.getSettings().formulas ? true : false;
