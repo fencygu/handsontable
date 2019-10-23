@@ -38,6 +38,7 @@ import { hasLanguageDictionary } from './i18n/dictionariesManager';
 import { warnUserAboutLanguageRegistration, applyLanguageSetting, normalizeLanguageCode } from './i18n/utils';
 import { startObserving as keyStateStartObserving, stopObserving as keyStateStopObserving } from './utils/keyStateObserver';
 import { Selection } from './selection';
+import { isFormulaExpression, toUpperCaseFormula, isFormulaExpressionEscaped, unescapeFormulaExpression } from './plugins/formulas/utils';
 
 let activeGuid = null;
 
@@ -370,8 +371,9 @@ export default function Core(rootElement, userSettings, rootInstanceSymbol = fal
           }
           // eslint-disable-next-line no-param-reassign
           index = (isDefined(index)) ? index : numberOfSourceRows;
-
+          console.log(JSON.stringify(datamap))  
           delta = datamap.createRow(index, amount, source);
+          console.log(JSON.stringify(datamap))
           spliceWith(priv.cellSettings, index, amount, 'array');
 
           if (delta) {
@@ -804,13 +806,13 @@ export default function Core(rootElement, userSettings, rootInstanceSymbol = fal
                       return typeof variable === 'number' || variable instanceof Number||!isNaN(variable);
                   }
                   
-                //console.log(direction); down right
+                  //console.log(direction); down right
                   let setInfo=instance.getSettings();
                   let bFormulas=instance.getSettings().formulas ? true : false;
 
                   if(bFormulas&&
                       isNotEmpty(value)&&
-                      value.charAt(0)==='='){
+                      isFormulaExpression(''+value)){
                       let sList = value.split("");
                       let iLen=0;
                       let sNums='';
@@ -1703,7 +1705,12 @@ export default function Core(rootElement, userSettings, rootInstanceSymbol = fal
    * @returns {String}
    */
   this.getCopyableData = function(row, column) {
-    return datamap.getCopyable(row, datamap.colToProp(column));
+	  let setInfo=this.getSettings();
+      let bFormulas=this.getSettings().formulas ? true : false;
+      if(bFormulas)
+          return dataSource.getAtCell(row, column);
+      else
+          return datamap.getCopyable(row, datamap.colToProp(column));
   };
 
   /**
