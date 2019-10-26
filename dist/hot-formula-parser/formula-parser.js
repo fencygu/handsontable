@@ -14282,8 +14282,7 @@ case 1:
 
 break;
 case 2:
-
-      this.$ = yy.callVariable($$[$0][0]);
+  this.$ = yy.callVariable($$[$0][0]);
 
 break;
 case 3:
@@ -14399,8 +14398,15 @@ case 22:
 
 break;
 case 26: case 27: case 28:
+    var n1 = yy.cellValue($$[$0]);
 
-      this.$ = yy.cellValue($$[$0]);
+    //this.$ = yy.toNumber(n1); 数值类型转换为数值
+    if(n1 === undefined || n1 == null || n1 === ''||typeof n1 === 'boolean'||isNaN(n1)||typeof n1 === 'number') {
+      this.$ = n1;
+    }else
+      this.$ = (''+n1).indexOf('.') > -1 ? parseFloat(n1) : parseInt(n1, 10);
+
+    //this.$ = yy.cellValue($$[$0]);
 
 break;
 case 29: case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37:
