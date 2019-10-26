@@ -98,10 +98,12 @@ class Sheet {
    */
   recalculateOptimized() {
     const cells = this.matrix.getOutOfDateCells();
-
+	
     arrayEach(cells, (cellValue) => {
       const value = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
-
+		if (!(typeof value == undefined || value == null || value === "")) {
+            console.log(value);
+        }
       if (isFormulaExpression(value)) {
         this.parseExpression(cellValue, value.substr(1));
       }

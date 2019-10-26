@@ -371,9 +371,7 @@ export default function Core(rootElement, userSettings, rootInstanceSymbol = fal
           }
           // eslint-disable-next-line no-param-reassign
           index = (isDefined(index)) ? index : numberOfSourceRows;
-          console.log(JSON.stringify(datamap))  
           delta = datamap.createRow(index, amount, source);
-          console.log(JSON.stringify(datamap))
           spliceWith(priv.cellSettings, index, amount, 'array');
 
           if (delta) {
