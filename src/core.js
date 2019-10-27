@@ -38,7 +38,9 @@ import { hasLanguageDictionary } from './i18n/dictionariesManager';
 import { warnUserAboutLanguageRegistration, applyLanguageSetting, normalizeLanguageCode } from './i18n/utils';
 import { startObserving as keyStateStartObserving, stopObserving as keyStateStopObserving } from './utils/keyStateObserver';
 import { Selection } from './selection';
-import { isFormulaExpression, toUpperCaseFormula, isFormulaExpressionEscaped, unescapeFormulaExpression } from './plugins/formulas/utils';
+import { cellCoordFactory, isFormulaExpression, toUpperCaseFormula, isFormulaExpressionEscaped, unescapeFormulaExpression } from './plugins/formulas/utils';
+import ExpressionModifier from './plugins/formulas/expressionModifier';
+import { toLabel, extractLabel, error, ERROR_REF } from 'hot-formula-parser';
 
 let activeGuid = null;
 
@@ -791,19 +793,38 @@ export default function Core(rootElement, userSettings, rootInstanceSymbol = fal
                 }
 				//增加带公式填充
 				var  isEmpty= function isEmpty(obj) {
-                      if (typeof obj == undefined || obj == null || obj === "") {
-                          return true;
-                      } else {
-                          return false;
-                      }
-                  };
-                  var  isNotEmpty = function isNotEmpty(obj) {
-                      return !isEmpty(obj);
-                  };
-                  var  isNumeric = function isNumeric(variable) {
-                      return typeof variable === 'number' || variable instanceof Number||!isNaN(variable);
-                  }
-                  
+				  if (typeof obj == undefined || obj == null || obj === "") {
+					  return true;
+				  } else {
+					  return false;
+				  }
+                };
+				  var  isNotEmpty = function isNotEmpty(obj) {
+					  return !isEmpty(obj);
+				  };
+				  var  isNumeric = function isNumeric(variable) {
+					  return typeof variable === 'number' || variable instanceof Number||!isNaN(variable);
+				  }
+				  
+				  var customTranslateModifier = function customTranslateModifier(cell, axis, delta, startFromIndex) {
+					  const { start, end, origLabel } = cell;
+					  const startIndex = start[axis].index;
+					  const endIndex = end[axis].index;
+					  //
+					  let labelInfo = extractLabel(origLabel);
+					  let deltaStart = delta;
+					  let deltaEnd = delta;
+					  if(axis==='row'&&labelInfo[0].isAbsolute){
+					   deltaStart = 0;
+					   deltaEnd = 0;
+					  }
+					  if(axis==='column'&&labelInfo[1].isAbsolute){
+					   deltaStart = 0;
+					   deltaEnd = 0;
+					  }
+					  return [deltaStart, deltaEnd, false];
+					}
+
                   //console.log(direction); down right
                   let setInfo=instance.getSettings();
                   let bFormulas=instance.getSettings().formulas ? true : false;
@@ -811,31 +832,21 @@ export default function Core(rootElement, userSettings, rootInstanceSymbol = fal
                   if(bFormulas&&
                       isNotEmpty(value)&&
                       isFormulaExpression(''+value)){
-                      let sList = value.split("");
-                      let iLen=0;
-                      let sNums='';
-                      let nList=''
-                      if(direction='down') {
-                          for (let i = 0; i < sList.length + 1; i++) {
-                              if (isNumeric(sList[i])) {
-                                  sNums += sList[i];
-                                  iLen += 1;
-                              } else {
-                                  if (isNotEmpty(sNums)) {
-                                      if (sList[i - iLen - 1] === '$')
-                                          nList += parseInt(sNums).toString();
-                                      else {
-                                          let iAdd = current.row - start.row + 1;
-                                          nList += (parseInt(sNums) + iAdd).toString();
-                                      }
-                                      iLen = 0;
-                                      sNums = '';
-                                  }
-                                  if (isNotEmpty(sList[i]))
-                                      nList += sList[i]
-                              }
-                          }
-                          value = nList;
+                      if(direction==='down') {
+						let iAdd = current.row - start.row + 1;
+						let expModifier = new ExpressionModifier(value);
+						let startCoord = cellCoordFactory('row', current.row);
+						expModifier.useCustomModifier(customTranslateModifier);
+						expModifier.translate({ row: iAdd }, startCoord(current));
+                        value = expModifier.toString();
+                      }
+					  if(direction==='right') {
+						let iAdd = current.col - start.col + 1;
+						let expModifier = new ExpressionModifier(value);
+						let startCoord = cellCoordFactory('column', current.col);
+						expModifier.useCustomModifier(customTranslateModifier);
+						expModifier.translate({ column: iAdd }, startCoord(current));
+                        value = expModifier.toString();
                       }
                   }
               }

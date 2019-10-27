@@ -49,7 +49,7 @@ export function operate(start, amount, modifyFormula = true) {
 
         expModifier.useCustomModifier(customTranslateModifier);
         expModifier.translate({ row: amount }, startCoord({ row: origRow, column: origColumn }));
-
+		console.log(expModifier.toString());
         dataProvider.updateSourceData(row, column, expModifier.toString());
       }
     }
