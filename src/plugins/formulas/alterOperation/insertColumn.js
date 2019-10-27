@@ -24,7 +24,7 @@ export const OPERATION_NAME = 'insert_column';
 export function operate(start, amount, modifyFormula = true) {
   const { matrix, dataProvider } = this;
   const translate = [0, amount];
-
+  dataProvider.clearChanges();
   arrayEach(matrix.cellReferences, (cell) => {
     if (cell.column >= start) {
       cell.translateTo(...translate);

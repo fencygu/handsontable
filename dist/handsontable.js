@@ -29,7 +29,7 @@
  * FROM USE OR INABILITY TO USE THIS SOFTWARE.
  * 
  * Version: 7.2.2
- * Release date: 23/10/2019 (built at 27/10/2019 15:59:58)
+ * Release date: 23/10/2019 (built at 28/10/2019 00:13:58)
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -39490,7 +39490,7 @@ Handsontable.EventManager = _eventManager.default;
 Handsontable._getListenersCounter = _eventManager.getListenersCounter; // For MemoryLeak tests
 
 Handsontable.packageName = 'handsontable';
-Handsontable.buildDate = "27/10/2019 15:59:58";
+Handsontable.buildDate = "28/10/2019 00:13:58";
 Handsontable.version = "7.2.2"; // Export Hooks singleton
 
 Handsontable.hooks = _pluginHooks.default.getSingleton(); // TODO: Remove this exports after rewrite tests about this module
@@ -46839,6 +46839,7 @@ function () {
       }
 
       this.instance.runHooks('afterCreateRow', rowIndex, numberOfCreatedRows, source);
+      console.log(this.dataSource);
       this.instance.forceFullRender = true; // used when data was changed
 
       return numberOfCreatedRows;
@@ -80390,6 +80391,7 @@ function operate(start, amount) {
   var matrix = this.matrix,
       dataProvider = this.dataProvider;
   var translate = [0, amount];
+  dataProvider.clearChanges();
   (0, _array.arrayEach)(matrix.cellReferences, function (cell) {
     if (cell.column >= start) {
       cell.translateTo.apply(cell, translate);
@@ -80493,7 +80495,9 @@ function operate(start, amount) {
   var modifyFormula = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   var matrix = this.matrix,
       dataProvider = this.dataProvider;
-  var translate = [amount, 0];
+  var translate = [amount, 0]; //֮ǰ�ı������û����������ȡ������
+
+  dataProvider.clearChanges();
   (0, _array.arrayEach)(matrix.cellReferences, function (cell) {
     if (cell.row >= start) {
       cell.translateTo.apply(cell, translate);
@@ -80511,7 +80515,7 @@ function operate(start, amount) {
     if (modifyFormula) {
       var row = cell.row,
           column = cell.column;
-      var value = dataProvider.getSourceDataAtCell(row, column);
+      var value = dataProvider.getSourceDataAtCell(row, column); //console.log(dataProvider.getSourceDataAtCell(row, column));
 
       if ((0, _utils.isFormulaExpression)(value)) {
         var startCoord = (0, _utils.cellCoordFactory)('row', start);
@@ -80523,7 +80527,6 @@ function operate(start, amount) {
           row: origRow,
           column: origColumn
         }));
-        console.log(expModifier.toString());
         dataProvider.updateSourceData(row, column, expModifier.toString());
       }
     }
@@ -80631,6 +80634,7 @@ function operate(start, amount) {
       cell.translateTo.apply(cell, translate);
     }
   });
+  dataProvider.clearChanges();
   (0, _array.arrayEach)(matrix.data, function (cell) {
     var origRow = cell.row,
         origColumn = cell.column;
@@ -80785,6 +80789,7 @@ function operate(start, amount) {
       cell.translateTo.apply(cell, translate);
     }
   });
+  dataProvider.clearChanges();
   (0, _array.arrayEach)(matrix.data, function (cell) {
     var origRow = cell.row,
         origColumn = cell.column;

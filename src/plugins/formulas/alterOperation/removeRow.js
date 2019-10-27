@@ -57,7 +57,7 @@ export function operate(start, amount, modifyFormula = true) {
       cell.translateTo(...translate);
     }
   });
-
+  dataProvider.clearChanges();
   arrayEach(matrix.data, (cell) => {
     const { row: origRow, column: origColumn } = cell;
 

@@ -29,7 +29,7 @@
  * FROM USE OR INABILITY TO USE THIS SOFTWARE.
  * 
  * Version: 7.2.2
- * Release date: 23/10/2019 (built at 27/10/2019 15:59:58)
+ * Release date: 23/10/2019 (built at 28/10/2019 00:13:58)
  */
 /**
  * Fix for bootstrap styles
@@ -180,9 +180,9 @@
   border-left-width: 0;
   border-right: 1px solid #CCC;
   border-bottom: 1px solid #CCC;
-  height: 23px;
+  height: 24px;
   empty-cells: show;
-  line-height: 22px;
+  line-height: 23px;
   padding: 0 4px 0 4px;
   /* top, bottom padding different than 0 is handled poorly by FF with HTML5 doctype */
   background-color: #FFF;
