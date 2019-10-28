@@ -317,7 +317,7 @@ class DataMap {
     }
 	
     this.instance.runHooks('afterCreateRow', rowIndex, numberOfCreatedRows, source);
-	console.log(this.dataSource);
+
     this.instance.forceFullRender = true; // used when data was changed
 
     return numberOfCreatedRows;

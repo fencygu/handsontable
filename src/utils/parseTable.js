@@ -281,6 +281,7 @@ export function htmlToGridSettings(element, rootDocument = document) {
       const {
         nodeName,
         innerHTML,
+		innerText,
         rowSpan: rowspan,
         colSpan: colspan,
       } = cell;
@@ -317,19 +318,19 @@ export function htmlToGridSettings(element, rootDocument = document) {
         }, {});
 
         if (cellStyle.whiteSpace === 'nowrap') {
-          dataArr[row][col] = innerHTML.replace(/[\r\n][\x20]{0,2}/gim, '\x20')
+          dataArr[row][col] = innerText.replace(/[\r\n][\x20]{0,2}/gim, '\x20')
             .replace(/<br(\s*|\/)>/gim, '\r\n')
             .replace(/(<([^>]+)>)/gi, '')
             .replace(/&nbsp;/gi, '\x20');
 
         } else if (generator && /excel/gi.test(generator.content)) {
-          dataArr[row][col] = innerHTML.replace(/<br(\s*|\/)>[\r\n]?[\x20]{0,2}/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
+          dataArr[row][col] = innerText.replace(/<br(\s*|\/)>[\r\n]?[\x20]{0,2}/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
         } else {
-          dataArr[row][col] = innerHTML.replace(/<br(\s*|\/)>[\r\n]?/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
+          dataArr[row][col] = innerText.replace(/<br(\s*|\/)>[\r\n]?/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
         }
 
       } else {
-        rowHeaders.push(innerHTML);
+        rowHeaders.push(innerText);
       }
     }
   }
