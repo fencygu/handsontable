@@ -8,6 +8,7 @@ import CellReference from './cell/reference';
 import { isFormulaExpression, toUpperCaseFormula } from './utils';
 import Matrix from './matrix';
 import AlterManager from './alterManager';
+import numbro from 'numbro';
 
 const STATE_UP_TO_DATE = 1;
 const STATE_NEED_REBUILD = 2;
@@ -243,6 +244,7 @@ class Sheet {
     this._processingCell.addPrecedent(cell);
 
     const cellValue = this.dataProvider.getRawDataAtCell(row.index, column.index);
+    const cellMeta = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
 
     if (isFormulaError(cellValue)) {
       const computedCell = this.matrix.getCellAt(row.index, column.index);

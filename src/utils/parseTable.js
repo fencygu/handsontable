@@ -285,6 +285,7 @@ export function htmlToGridSettings(element, rootDocument = document) {
         rowSpan: rowspan,
         colSpan: colspan,
       } = cell;
+
       const col = dataArr[row].findIndex(value => value === void 0);
 
       if (nodeName === 'TD') {

@@ -29,7 +29,7 @@
  * FROM USE OR INABILITY TO USE THIS SOFTWARE.
  * 
  * Version: 7.2.2
- * Release date: 23/10/2019 (built at 28/10/2019 00:13:58)
+ * Release date: 23/10/2019 (built at 28/10/2019 21:22:17)
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -41581,6 +41581,7 @@ function htmlToGridSettings(element) {
       var cell = cells[cellId];
       var nodeName = cell.nodeName,
           innerHTML = cell.innerHTML,
+          innerText = cell.innerText,
           rowspan = cell.rowSpan,
           colspan = cell.colSpan;
       var col = dataArr[row].findIndex(function (value) {
@@ -41623,14 +41624,14 @@ function htmlToGridSettings(element) {
         }, {});
 
         if (cellStyle.whiteSpace === 'nowrap') {
-          dataArr[row][col] = innerHTML.replace(/[\r\n][\x20]{0,2}/gim, '\x20').replace(/<br(\s*|\/)>/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
+          dataArr[row][col] = innerText.replace(/[\r\n][\x20]{0,2}/gim, '\x20').replace(/<br(\s*|\/)>/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
         } else if (generator && /excel/gi.test(generator.content)) {
-          dataArr[row][col] = innerHTML.replace(/<br(\s*|\/)>[\r\n]?[\x20]{0,2}/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
+          dataArr[row][col] = innerText.replace(/<br(\s*|\/)>[\r\n]?[\x20]{0,2}/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
         } else {
-          dataArr[row][col] = innerHTML.replace(/<br(\s*|\/)>[\r\n]?/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
+          dataArr[row][col] = innerText.replace(/<br(\s*|\/)>[\r\n]?/gim, '\r\n').replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/gi, '\x20');
         }
       } else {
-        rowHeaders.push(innerHTML);
+        rowHeaders.push(innerText);
       }
     };
 
@@ -70732,7 +70733,7 @@ Handsontable.EventManager = _eventManager.default;
 Handsontable._getListenersCounter = _eventManager.getListenersCounter; // For MemoryLeak tests
 
 Handsontable.packageName = 'handsontable';
-Handsontable.buildDate = "28/10/2019 00:13:58";
+Handsontable.buildDate = "28/10/2019 21:22:17";
 Handsontable.version = "7.2.2"; // Export Hooks singleton
 
 Handsontable.hooks = _pluginHooks.default.getSingleton(); // TODO: Remove this exports after rewrite tests about this module
@@ -79550,7 +79551,6 @@ function () {
       }
 
       this.instance.runHooks('afterCreateRow', rowIndex, numberOfCreatedRows, source);
-      console.log(this.dataSource);
       this.instance.forceFullRender = true; // used when data was changed
 
       return numberOfCreatedRows;
