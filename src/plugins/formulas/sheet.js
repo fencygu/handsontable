@@ -101,8 +101,8 @@ class Sheet {
     console.log(this.dataProvider.currentDatetime());
     arrayEach(cells, (cellValue) => {
       const value = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
-	  console.log(cellValue+":"+this.dataProvider.currentDatetime());
       if (isFormulaExpression(value)) {
+		 console.log(value+":"+this.dataProvider.currentDatetime());
         this.parseExpression(cellValue, value.substr(1));
       }
     });
@@ -122,6 +122,7 @@ class Sheet {
     arrayEach(cells, (rowData, row) => {
       arrayEach(rowData, (value, column) => {
         if (isFormulaExpression(value)) {
+		  console.log(value+":"+this.dataProvider.currentDatetime());
           this.parseExpression(new CellValue(row, column), value.substr(1));
         }
       });
