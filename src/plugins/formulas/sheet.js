@@ -267,8 +267,12 @@ class Sheet {
    * @param {Function} done Function to call with valid cells values.
    */
   _onCallRangeValue({ row: startRow, column: startColumn }, { row: endRow, column: endColumn }, done) {
-    const cellValues = this.dataProvider.getRawDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
-
+    
+    //改造，如果公式没有数据变更直接取数据，不需要再根据公式进行计算浪费时间，
+	//特别是嵌套很多的时候很浪费很多的时间，根据changes的参数看是否是变更的列。
+	//变更的单元格，也先进行变更单元格计算.
+	//const cellValues = this.dataProvider.getRawDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
+	const cellValues = this.dataProvider.getDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
     const mapRowData = (rowData, rowIndex) => arrayMap(rowData, (cellData, columnIndex) => {
       const rowCellCoord = startRow.index + rowIndex;
       const columnCellCoord = startColumn.index + columnIndex;
