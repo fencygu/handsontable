@@ -24,25 +24,6 @@ module.exports.create = function create(envArgs) {
 
     c.optimization = {
       minimize: true,
-<<<<<<< HEAD
-      minimizer: [
-        new UglifyJsPlugin({
-          parallel: true,
-          uglifyOptions: {
-            compressor: {
-              pure_getters: true,
-              warnings: false,
-            },
-			ascii:true,
-            mangle: {},
-            output: {
-              comments: /^!|@preserve|@license|@cc_on/i,
-            },
-          },
-        }),
-      ]
-=======
->>>>>>> ca1ab950de4522bdb899f9e442cef978d860685e
     };
     // Remove all 'MiniCssExtractPlugin' instances
     c.plugins = c.plugins.filter(function(plugin) {
