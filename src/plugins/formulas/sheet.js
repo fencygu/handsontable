@@ -98,15 +98,15 @@ class Sheet {
    */
   recalculateOptimized() {
     const cells = this.matrix.getOutOfDateCells();
-
+    console.log(this.dataProvider.currentDatetime());
     arrayEach(cells, (cellValue) => {
       const value = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
-
       if (isFormulaExpression(value)) {
+		 console.log(value+":"+this.dataProvider.currentDatetime());
         this.parseExpression(cellValue, value.substr(1));
       }
     });
-
+	console.log(this.dataProvider.currentDatetime());
     this._state = STATE_UP_TO_DATE;
     this.runLocalHooks('afterRecalculate', cells, 'optimized');
   }
@@ -116,17 +116,18 @@ class Sheet {
    */
   recalculateFull() {
     const cells = this.dataProvider.getSourceDataByRange();
-
+	console.log(this.dataProvider.currentDatetime());
     this.matrix.reset();
 
     arrayEach(cells, (rowData, row) => {
       arrayEach(rowData, (value, column) => {
         if (isFormulaExpression(value)) {
+		  console.log(value+":"+this.dataProvider.currentDatetime());
           this.parseExpression(new CellValue(row, column), value.substr(1));
         }
       });
     });
-
+    console.log(this.dataProvider.currentDatetime());
     this._state = STATE_UP_TO_DATE;
     this.runLocalHooks('afterRecalculate', cells, 'full');
   }
