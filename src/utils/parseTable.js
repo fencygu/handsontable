@@ -286,9 +286,11 @@ export function htmlToGridSettings(element, rootDocument = document) {
       const {
         nodeName,
         innerHTML,
+		    innerText,
         rowSpan: rowspan,
         colSpan: colspan,
       } = cell;
+
       const col = dataArr[row].findIndex(value => value === void 0);
 
       if (nodeName === 'TD') {
@@ -335,7 +337,7 @@ export function htmlToGridSettings(element, rootDocument = document) {
         dataArr[row][col] = cellValue.replace(regEscapedChars, match => ESCAPED_HTML_CHARS[match]);
 
       } else {
-        rowHeaders.push(innerHTML);
+        rowHeaders.push(innerText);
       }
     }
   }

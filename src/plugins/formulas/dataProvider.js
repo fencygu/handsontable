@@ -159,6 +159,19 @@ class DataProvider {
   }
 
   /**
+   * Get source data at specified physical cell.
+   *
+   * @param {Number} physicalRow Physical row index.
+   * @param {Number} physicalColumn Physical column index.
+   * @returns {*}
+   */
+  getCellMetaAtCell(physicalRow, physicalColumn) {
+    let result;
+    result = this.hot.getCellMetaAtCell(physicalRow, physicalColumn);
+    return result;
+  }
+
+  /**
    * Get source data at specified physical range.
    *
    * @param {Number} [physicalRow1] Physical row index.

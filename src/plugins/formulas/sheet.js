@@ -8,6 +8,7 @@ import CellReference from './cell/reference';
 import { isFormulaExpression, toUpperCaseFormula } from './utils';
 import Matrix from './matrix';
 import AlterManager from './alterManager';
+import numbro from 'numbro';
 
 const STATE_UP_TO_DATE = 1;
 const STATE_NEED_REBUILD = 2;
@@ -98,9 +99,16 @@ class Sheet {
    */
   recalculateOptimized() {
     const cells = this.matrix.getOutOfDateCells();
+<<<<<<< HEAD
+	
+    arrayEach(cells, (cellValue) => {
+      const value = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
+		
+=======
     console.log(this.dataProvider.currentDatetime());
     arrayEach(cells, (cellValue) => {
       const value = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
+>>>>>>> eb977d36169c9306aefa07371156f62faee785b2
       if (isFormulaExpression(value)) {
 		 console.log(value+":"+this.dataProvider.currentDatetime());
         this.parseExpression(cellValue, value.substr(1));
@@ -244,6 +252,7 @@ class Sheet {
     this._processingCell.addPrecedent(cell);
 
     const cellValue = this.dataProvider.getRawDataAtCell(row.index, column.index);
+    const cellMeta = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
 
     if (isFormulaError(cellValue)) {
       const computedCell = this.matrix.getCellAt(row.index, column.index);

@@ -24,32 +24,34 @@ export const OPERATION_NAME = 'insert_row';
 export function operate(start, amount, modifyFormula = true) {
   const { matrix, dataProvider } = this;
   const translate = [amount, 0];
-
+  //之前的变更数据没有清理导致取数不对
+  dataProvider.clearChanges();
   arrayEach(matrix.cellReferences, (cell) => {
+	  
     if (cell.row >= start) {
-      cell.translateTo(...translate);
+	  cell.translateTo(...translate);
     }
   });
-
+  
   arrayEach(matrix.data, (cell) => {
     const { row: origRow, column: origColumn } = cell;
-
+	
     if (cell.row >= start) {
       cell.translateTo(...translate);
       cell.setState(CellValue.STATE_OUT_OFF_DATE);
     }
-
+	
     if (modifyFormula) {
       const { row, column } = cell;
       const value = dataProvider.getSourceDataAtCell(row, column);
-
+	  //console.log(dataProvider.getSourceDataAtCell(row, column));
       if (isFormulaExpression(value)) {
         const startCoord = cellCoordFactory('row', start);
         const expModifier = new ExpressionModifier(value);
 
         expModifier.useCustomModifier(customTranslateModifier);
         expModifier.translate({ row: amount }, startCoord({ row: origRow, column: origColumn }));
-
+		
         dataProvider.updateSourceData(row, column, expModifier.toString());
       }
     }
