@@ -29,7 +29,7 @@
  * FROM USE OR INABILITY TO USE THIS SOFTWARE.
  * 
  * Version: 7.4.0
- * Release date: 10/02/2020 (built at 09/02/2020 12:38:50)
+ * Release date: 10/02/2020 (built at 09/02/2020 21:45:43)
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -40177,7 +40177,7 @@ Handsontable.EventManager = _eventManager.default;
 Handsontable._getListenersCounter = _eventManager.getListenersCounter; // For MemoryLeak tests
 
 Handsontable.packageName = 'handsontable';
-Handsontable.buildDate = "09/02/2020 12:38:50";
+Handsontable.buildDate = "09/02/2020 21:45:43";
 Handsontable.version = "7.4.0"; // Export Hooks singleton
 
 Handsontable.hooks = _pluginHooks.default.getSingleton(); // TODO: Remove this exports after rewrite tests about this module
@@ -80475,6 +80475,8 @@ function () {
   }, {
     key: "applyChanges",
     value: function applyChanges(row, column, newValue) {
+      var _this4 = this;
+
       // Remove formula description for old expression
       // TODO: Move this to recalculate()
       this.matrix.remove({
@@ -80490,7 +80492,10 @@ function () {
       var deps = this.getCellDependencies.apply(this, (0, _toConsumableArray2.default)(this.t.toVisual(row, column)));
       (0, _array.arrayEach)(deps, function (cellValue) {
         cellValue.setState(_value.default.STATE_OUT_OFF_DATE);
-      });
+
+        _this4.dataProvider.collectDeps(cellValue.row, cellValue.column, cellValue.value);
+      }); //console.log(deps);
+
       this._state = STATE_NEED_REBUILD;
     }
     /**
@@ -80610,7 +80615,7 @@ function () {
   }, {
     key: "_onCallRangeValue",
     value: function _onCallRangeValue(_ref2, _ref3, done) {
-      var _this4 = this;
+      var _this5 = this;
 
       var startRow = _ref2.row,
           startColumn = _ref2.column;
@@ -80620,7 +80625,7 @@ function () {
       //�ر���Ƕ�׺ܶ��ʱ����˷Ѻܶ��ʱ�䣬����changes�Ĳ������Ƿ��Ǳ�����С�
       //����ĵ�Ԫ��Ҳ�Ƚ��б����Ԫ�����.
       //const cellValues = this.dataProvider.getRawDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
-      var cellValues = this.dataProvider.getDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
+      var cellValues = this.dataProvider.getChangeDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
 
       var mapRowData = function mapRowData(rowData, rowIndex) {
         return (0, _array.arrayMap)(rowData, function (cellData, columnIndex) {
@@ -80628,18 +80633,18 @@ function () {
           var columnCellCoord = startColumn.index + columnIndex;
           var cell = new _reference.default(rowCellCoord, columnCellCoord);
 
-          if (!_this4.dataProvider.isInDataRange(cell.row, cell.column)) {
+          if (!_this5.dataProvider.isInDataRange(cell.row, cell.column)) {
             throw Error(_hotFormulaParser.ERROR_REF);
           }
 
-          _this4.matrix.registerCellRef(cell);
+          _this5.matrix.registerCellRef(cell);
 
-          _this4._processingCell.addPrecedent(cell);
+          _this5._processingCell.addPrecedent(cell);
 
           var newCellData = cellData;
 
           if ((0, _hotFormulaParser.error)(newCellData)) {
-            var computedCell = _this4.matrix.getCellAt(cell.row, cell.column);
+            var computedCell = _this5.matrix.getCellAt(cell.row, cell.column);
 
             if (computedCell && computedCell.hasError()) {
               throw Error(newCellData);
@@ -80647,9 +80652,9 @@ function () {
           }
 
           if ((0, _utils.isFormulaExpression)(newCellData)) {
-            var _this4$parser$parse = _this4.parser.parse(newCellData.substr(1)),
-                error = _this4$parser$parse.error,
-                result = _this4$parser$parse.result;
+            var _this5$parser$parse = _this5.parser.parse(newCellData.substr(1)),
+                error = _this5$parser$parse.error,
+                result = _this5$parser$parse.result;
 
             if (error) {
               throw Error(error);
@@ -81857,6 +81862,7 @@ function () {
      */
 
     this.changes = {};
+    this.deps = {};
     /**
      * Record translator for translating visual records into psychical and vice versa.
      *
@@ -81880,6 +81886,19 @@ function () {
       this.changes[this._coordId(row, column)] = value;
     }
     /**
+     * Collect all deps changes applied to the Handsontable to make them available later.
+     *
+     * @param {Number} row Physical row index.
+     * @param {Number} column Physical column index.
+     * @param {*} value Value to store.
+     */
+
+  }, {
+    key: "collectDeps",
+    value: function collectDeps(row, column, value) {
+      this.deps[this._coordId(row, column)] = value;
+    }
+    /**
      * Clear all collected changes.
      */
 
@@ -81887,6 +81906,7 @@ function () {
     key: "clearChanges",
     value: function clearChanges() {
       this.changes = {};
+      this.deps = {};
     }
   }, {
     key: "currentDatetime",
@@ -82042,18 +82062,18 @@ function () {
       return this.getSourceDataAtCell.apply(this, (0, _toConsumableArray2.default)(this.t.toPhysical(visualRow, visualColumn)));
     }
     /**
-     * Get source data at specified visual range.
-     *
-     * @param {Number} [visualRow1] Visual row index.
-     * @param {Number} [visualColumn1] Visual column index.
-     * @param {Number} [visualRow2] Visual row index.
-     * @param {Number} [visualColumn2] Visual column index.
-     * @returns {Array}
-     */
+       * Get change data at specified visual range.
+       *
+       * @param {Number} [visualRow1] Visual row index.
+       * @param {Number} [visualColumn1] Visual column index.
+       * @param {Number} [visualRow2] Visual row index.
+       * @param {Number} [visualColumn2] Visual column index.
+       * @returns {Array}
+       */
 
   }, {
-    key: "getRawDataByRange",
-    value: function getRawDataByRange(visualRow1, visualColumn1, visualRow2, visualColumn2) {
+    key: "getChangeDataByRange",
+    value: function getChangeDataByRange(visualRow1, visualColumn1, visualRow2, visualColumn2) {
       var _this2 = this;
 
       var data = [];
@@ -82069,8 +82089,48 @@ function () {
 
           if ((0, _object.hasOwnProperty)(_this2.changes, id)) {
             row.push(_this2.changes[id]);
-          } else {
+          } else if ((0, _object.hasOwnProperty)(_this2.deps, id)) {
+            //let data=this.getSourceDataAtCell(physicalRow, physicalColumn);
+            //console.log(data);
             row.push(_this2.getSourceDataAtCell(physicalRow, physicalColumn));
+          } else {
+            row.push(_this2.getDataAtCell(physicalRow, physicalColumn));
+          }
+        });
+        data.push(row);
+      });
+      return data;
+    }
+    /**
+     * Get source data at specified visual range.
+     *
+     * @param {Number} [visualRow1] Visual row index.
+     * @param {Number} [visualColumn1] Visual column index.
+     * @param {Number} [visualRow2] Visual row index.
+     * @param {Number} [visualColumn2] Visual column index.
+     * @returns {Array}
+     */
+
+  }, {
+    key: "getRawDataByRange",
+    value: function getRawDataByRange(visualRow1, visualColumn1, visualRow2, visualColumn2) {
+      var _this3 = this;
+
+      var data = [];
+      (0, _number.rangeEach)(visualRow1, visualRow2, function (visualRow) {
+        var row = [];
+        (0, _number.rangeEach)(visualColumn1, visualColumn2, function (visualColumn) {
+          var _this3$t$toPhysical = _this3.t.toPhysical(visualRow, visualColumn),
+              _this3$t$toPhysical2 = (0, _slicedToArray2.default)(_this3$t$toPhysical, 2),
+              physicalRow = _this3$t$toPhysical2[0],
+              physicalColumn = _this3$t$toPhysical2[1];
+
+          var id = _this3._coordId(physicalRow, physicalColumn);
+
+          if ((0, _object.hasOwnProperty)(_this3.changes, id)) {
+            row.push(_this3.changes[id]);
+          } else {
+            row.push(_this3.getSourceDataAtCell(physicalRow, physicalColumn));
           }
         });
         data.push(row);

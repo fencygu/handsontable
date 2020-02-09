@@ -175,8 +175,10 @@ class Sheet {
 
     arrayEach(deps, (cellValue) => {
       cellValue.setState(CellValue.STATE_OUT_OFF_DATE);
+	  this.dataProvider.collectDeps(cellValue.row,cellValue.column,cellValue.value);
     });
-
+	//console.log(deps);
+    
     this._state = STATE_NEED_REBUILD;
   }
 
@@ -281,7 +283,7 @@ class Sheet {
 	//特别是嵌套很多的时候很浪费很多的时间，根据changes的参数看是否是变更的列。
 	//变更的单元格，也先进行变更单元格计算.
 	//const cellValues = this.dataProvider.getRawDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
-	const cellValues = this.dataProvider.getDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
+	const cellValues = this.dataProvider.getChangeDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
 
     const mapRowData = (rowData, rowIndex) => arrayMap(rowData, (cellData, columnIndex) => {
       const rowCellCoord = startRow.index + rowIndex;
