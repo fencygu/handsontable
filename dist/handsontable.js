@@ -29,7 +29,7 @@
  * FROM USE OR INABILITY TO USE THIS SOFTWARE.
  * 
  * Version: 7.4.0
- * Release date: 10/02/2020 (built at 08/02/2020 22:56:40)
+ * Release date: 10/02/2020 (built at 09/02/2020 10:37:51)
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -40084,7 +40084,7 @@ Handsontable.EventManager = _eventManager.default;
 Handsontable._getListenersCounter = _eventManager.getListenersCounter; // For MemoryLeak tests
 
 Handsontable.packageName = 'handsontable';
-Handsontable.buildDate = "08/02/2020 22:56:40";
+Handsontable.buildDate = "09/02/2020 10:37:51";
 Handsontable.version = "7.4.0"; // Export Hooks singleton
 
 Handsontable.hooks = _pluginHooks.default.getSingleton(); // TODO: Remove this exports after rewrite tests about this module
@@ -80527,7 +80527,11 @@ function () {
           startColumn = _ref2.column;
       var endRow = _ref3.row,
           endColumn = _ref3.column;
-      var cellValues = this.dataProvider.getRawDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
+      //���죬�����ʽû�����ݱ��ֱ��ȡ���ݣ�����Ҫ�ٸ��ݹ�ʽ���м����˷�ʱ�䣬
+      //�ر���Ƕ�׺ܶ��ʱ����˷Ѻܶ��ʱ�䣬����changes�Ĳ������Ƿ��Ǳ�����С�
+      //����ĵ�Ԫ��Ҳ�Ƚ��б����Ԫ�����.
+      //const cellValues = this.dataProvider.getRawDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
+      var cellValues = this.dataProvider.getDataByRange(startRow.index, startColumn.index, endRow.index, endColumn.index);
 
       var mapRowData = function mapRowData(rowData, rowIndex) {
         return (0, _array.arrayMap)(rowData, function (cellData, columnIndex) {
