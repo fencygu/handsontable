@@ -1,7 +1,7 @@
 import { getProperty } from './helpers/object';
 import { arrayEach } from './helpers/array';
 import { rangeEach } from './helpers/number';
-
+import { isEmpty } from './helpers/mixed';
 /**
  * @class DataSource
  * @private
@@ -148,26 +148,28 @@ class DataSource {
 
     rangeEach(startRow, endRow, (currentRow) => {
       const row = this.getAtRow(currentRow);
-      let newRow;
+	  if(!isEmpty(row)){
+		  let newRow;
 
-      if (this.dataType === 'array') {
-        newRow = row.slice(startCol, endCol + 1);
+		  if (this.dataType === 'array') {
+			newRow = row.slice(startCol, endCol + 1);
 
-      } else if (this.dataType === 'object') {
-        newRow = toArray ? [] : {};
+		  } else if (this.dataType === 'object') {
+			newRow = toArray ? [] : {};
 
-        rangeEach(startCol, endCol, (column) => {
-          const prop = this.colToProp(column);
+			rangeEach(startCol, endCol, (column) => {
+			  const prop = this.colToProp(column);
 
-          if (toArray) {
-            newRow.push(row[prop]);
-          } else {
-            newRow[prop] = row[prop];
-          }
-        });
-      }
-
-      result.push(newRow);
+			  if (toArray) {
+				newRow.push(row[prop]);
+			  } else {
+				newRow[prop] = row[prop];
+			  }
+			});
+		  }
+		  result.push(newRow);
+	  }
+      
     });
 
     return result;
