@@ -27,6 +27,8 @@ class DataProvider {
      * @type {Object}
      */
     this.changes = {};
+
+	this.deps = {};
     /**
      * Record translator for translating visual records into psychical and vice versa.
      *
@@ -47,10 +49,22 @@ class DataProvider {
   }
 
   /**
+   * Collect all deps changes applied to the Handsontable to make them available later.
+   *
+   * @param {Number} row Physical row index.
+   * @param {Number} column Physical column index.
+   * @param {*} value Value to store.
+   */
+  collectDeps(row, column, value) {
+    this.deps[this._coordId(row, column)] = value;
+  }
+
+  /**
    * Clear all collected changes.
    */
   clearChanges() {
     this.changes = {};
+	this.deps ={};
   }
 
   currentDatetime() {
@@ -193,6 +207,43 @@ class DataProvider {
    */
   getRawDataAtCell(visualRow, visualColumn) {
     return this.getSourceDataAtCell(...this.t.toPhysical(visualRow, visualColumn));
+  }
+
+/**
+   * Get change data at specified visual range.
+   *
+   * @param {Number} [visualRow1] Visual row index.
+   * @param {Number} [visualColumn1] Visual column index.
+   * @param {Number} [visualRow2] Visual row index.
+   * @param {Number} [visualColumn2] Visual column index.
+   * @returns {Array}
+   */
+  getChangeDataByRange(visualRow1, visualColumn1, visualRow2, visualColumn2) {
+    const data = [];
+
+    rangeEach(visualRow1, visualRow2, (visualRow) => {
+      const row = [];
+
+      rangeEach(visualColumn1, visualColumn2, (visualColumn) => {
+        const [physicalRow, physicalColumn] = this.t.toPhysical(visualRow, visualColumn);
+        const id = this._coordId(physicalRow, physicalColumn);
+		
+        if (hasOwnProperty(this.changes, id)) {
+          row.push(this.changes[id]);
+        } else if (hasOwnProperty(this.deps, id)) {
+			//let data=this.getSourceDataAtCell(physicalRow, physicalColumn);
+			//console.log(data);
+          row.push(this.getSourceDataAtCell(physicalRow, physicalColumn));
+        } else {
+          row.push(this.getDataAtCell(physicalRow, physicalColumn));
+        }
+		
+      });
+
+      data.push(row);
+    });
+
+    return data;
   }
 
   /**
