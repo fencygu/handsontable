@@ -99,9 +99,16 @@ class Sheet {
    */
   recalculateOptimized() {
     const cells = this.matrix.getOutOfDateCells();
+<<<<<<< HEAD
+	
+    arrayEach(cells, (cellValue) => {
+      const value = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
+		
+=======
     console.log(this.dataProvider.currentDatetime());
     arrayEach(cells, (cellValue) => {
       const value = this.dataProvider.getSourceDataAtCell(cellValue.row, cellValue.column);
+>>>>>>> eb977d36169c9306aefa07371156f62faee785b2
       if (isFormulaExpression(value)) {
 		 console.log(value+":"+this.dataProvider.currentDatetime());
         this.parseExpression(cellValue, value.substr(1));
