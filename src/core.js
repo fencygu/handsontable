@@ -3112,6 +3112,22 @@ export default function Core(rootElement, userSettings, rootInstanceSymbol = fal
     return instance.view.wt.wtTable.getFirstRenderedColumn();
   };
 
+  this.getFirstVisibleRow = function() {
+    return instance.view.wt.wtTable.getFirstVisibleRow();
+  };
+
+  this.getLastVisibleRow = function() {
+    return instance.view.wt.wtTable.getLastVisibleRow();
+  };
+
+  this.getFirstVisibleColumn = function() {
+    return instance.view.wt.wtTable.getFirstVisibleColumn();
+  };
+
+  this.getLastVisibleColumn = function() {
+    return instance.view.wt.wtTable.getLastVisibleColumn();
+  };
+
   /**
    * Returns the number of rendered rows (including rows partially or fully rendered outside viewport).
    *
